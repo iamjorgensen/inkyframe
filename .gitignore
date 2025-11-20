@@ -1,0 +1,22 @@
+# exclude unwanted vendor dirs
+waveshare_epd/
+e-Paper/
+
+# python cache
+__pycache__/
+*.pyc
+
+# secrets
+dokkveien-*.json
+*.env
+
+# test files
+test*
+
+# virtual environments
+.venv/
+venv/
+
+# OS junk
+.DS_Store
+Thumbs.db

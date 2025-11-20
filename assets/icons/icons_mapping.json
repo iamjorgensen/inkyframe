@@ -1,0 +1,312 @@
+{
+  "icons_produced": {
+    "calendar": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/calendar.svg",
+      "sizes": []
+    },
+    "clock": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/clock.svg",
+      "sizes": []
+    },
+    "bell": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/bell.svg",
+      "sizes": []
+    },
+    "gift": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/gift.svg",
+      "sizes": []
+    },
+    "coffee": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/coffee.svg",
+      "sizes": []
+    },
+    "home": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/home.svg",
+      "sizes": []
+    },
+    "phone": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/phone.svg",
+      "sizes": []
+    },
+    "users": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/users.svg",
+      "sizes": []
+    },
+    "book": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/book.svg",
+      "sizes": []
+    },
+    "briefcase": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/briefcase.svg",
+      "sizes": []
+    },
+    "heart": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/heart.svg",
+      "sizes": []
+    },
+    "star": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/star.svg",
+      "sizes": []
+    },
+    "alert-circle": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/alert-circle.svg",
+      "sizes": []
+    },
+    "sun": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/sun.svg",
+      "sizes": []
+    },
+    "cloud": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/cloud.svg",
+      "sizes": []
+    },
+    "cloud-rain": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/cloud-rain.svg",
+      "sizes": []
+    },
+    "umbrella": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/umbrella.svg",
+      "sizes": []
+    },
+    "wind": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/wind.svg",
+      "sizes": []
+    },
+    "thermometer": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/thermometer.svg",
+      "sizes": []
+    },
+    "tv": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/tv.svg",
+      "sizes": []
+    },
+    "camera": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/camera.svg",
+      "sizes": []
+    },
+    "music": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/music.svg",
+      "sizes": []
+    },
+    "shopping-cart": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/shopping-cart.svg",
+      "sizes": []
+    },
+    "map-pin": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/map-pin.svg",
+      "sizes": []
+    },
+    "film": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/film.svg",
+      "sizes": []
+    },
+    "scissors": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/scissors.svg",
+      "sizes": []
+    },
+    "truck": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/truck.svg",
+      "sizes": []
+    },
+    "cpu": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/cpu.svg",
+      "sizes": []
+    },
+    "battery": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/battery.svg",
+      "sizes": []
+    },
+    "activity": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/activity.svg",
+      "sizes": []
+    },
+    "target": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/target.svg",
+      "sizes": []
+    },
+    "flag": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/flag.svg",
+      "sizes": []
+    },
+    "shopping-bag": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/shopping-bag.svg",
+      "sizes": []
+    },
+    "headphones": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/headphones.svg",
+      "sizes": []
+    },
+    "droplet": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/droplet.svg",
+      "sizes": []
+    },
+    "play": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/play.svg",
+      "sizes": []
+    },
+    "pause": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/pause.svg",
+      "sizes": []
+    },
+    "repeat": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/repeat.svg",
+      "sizes": []
+    },
+    "refresh-cw": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/refresh-cw.svg",
+      "sizes": []
+    },
+    "map": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/map.svg",
+      "sizes": []
+    },
+    "navigation": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/navigation.svg",
+      "sizes": []
+    },
+    "phone-call": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/phone-call.svg",
+      "sizes": []
+    },
+    "mail": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/mail.svg",
+      "sizes": []
+    },
+    "folder": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/folder.svg",
+      "sizes": []
+    },
+    "file-text": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/file-text.svg",
+      "sizes": []
+    },
+    "clipboard": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/clipboard.svg",
+      "sizes": []
+    },
+    "check-circle": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/check-circle.svg",
+      "sizes": []
+    },
+    "x-circle": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/x-circle.svg",
+      "sizes": []
+    },
+    "globe": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/globe.svg",
+      "sizes": []
+    },
+    "user-check": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/user-check.svg",
+      "sizes": []
+    },
+    "user-minus": {
+      "source": "https://raw.githubusercontent.com/feathericons/feather/master/icons/user-minus.svg",
+      "sizes": []
+    }
+  },
+  "event_mapping_defaults_added": {
+    "bursdag": "gift",
+    "bursdag (barn)": "gift",
+    "barnebursdag": "gift",
+    "jubileum": "star",
+    "kake": "birthday-cake",
+    "jobb": "briefcase",
+    "møte": "users",
+    "videomøte": "video",
+    "skole": "book",
+    "barnehage": "book",
+    "henting": "clock",
+    "levering": "truck",
+    "foreldremøte": "users",
+    "sfo": "book",
+    "lege": "cross-medical",
+    "tannlege": "cross-medical",
+    "vaksine": "shield",
+    "påminnelse": "bell",
+    "medisin": "droplet",
+    "handletur": "shopping-cart",
+    "butikk": "shopping-bag",
+    "post": "mail",
+    "reise": "globe",
+    "piknik": "map-pin",
+    "tur": "map",
+    "ferie": "sun",
+    "fotball": "football",
+    "trening": "activity",
+    "gym": "dumbbell",
+    "dans": "music",
+    "svømming": "droplet",
+    "vask": "scissors",
+    "vask (maskin)": "scissors",
+    "rengjøring": "broom",
+    "avtale": "calendar",
+    "kino": "film",
+    "konsert": "music",
+    "middag": "coffee",
+    "kveld": "moon",
+    "leggetid": "bed",
+    "sover": "bed",
+    "r.i.p": "skull",
+    "dødsdag": "coffin",
+    "gravferd": "coffin",
+    "viktig": "alert-circle",
+    "henting skole": "clock",
+    "betalingsfrist": "credit-card",
+    "legekontroll": "cross-medical",
+    "bilvask": "truck",
+    "hjertestarter": "heart"
+  },
+  "event_mapping_merged": {
+    "bursdag": "gift",
+    "bursdag (barn)": "gift",
+    "barnebursdag": "gift",
+    "jubileum": "star",
+    "kake": "birthday-cake",
+    "jobb": "briefcase",
+    "møte": "users",
+    "videomøte": "video",
+    "skole": "book",
+    "barnehage": "book",
+    "henting": "clock",
+    "levering": "truck",
+    "foreldremøte": "users",
+    "sfo": "book",
+    "lege": "cross-medical",
+    "tannlege": "cross-medical",
+    "vaksine": "shield",
+    "påminnelse": "bell",
+    "medisin": "droplet",
+    "handletur": "shopping-cart",
+    "butikk": "shopping-bag",
+    "post": "mail",
+    "reise": "globe",
+    "piknik": "map-pin",
+    "tur": "map",
+    "ferie": "sun",
+    "fotball": "football",
+    "trening": "activity",
+    "gym": "dumbbell",
+    "dans": "music",
+    "svømming": "droplet",
+    "vask": "scissors",
+    "vask (maskin)": "scissors",
+    "rengjøring": "broom",
+    "avtale": "calendar",
+    "kino": "film",
+    "konsert": "music",
+    "middag": "coffee",
+    "kveld": "moon",
+    "leggetid": "bed",
+    "sover": "bed",
+    "r.i.p": "skull",
+    "dødsdag": "coffin",
+    "gravferd": "coffin",
+    "viktig": "alert-circle",
+    "henting skole": "clock",
+    "betalingsfrist": "credit-card",
+    "legekontroll": "cross-medical",
+    "bilvask": "truck",
+    "hjertestarter": "heart"
+  }
+}
