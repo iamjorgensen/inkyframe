@@ -20,8 +20,8 @@ ASSETS_DIR = os.path.join(os.path.dirname(__file__), "assets")
 FONTS_DIR = os.path.join(ASSETS_DIR, "fonts")
 ICONS_DIR = os.path.join(ASSETS_DIR, "icons")
 
-DEFAULT_FONT = os.path.join(FONTS_DIR, "FredokaOne-Regular.ttf")
-DEFAULT_BOLD_FONT = os.path.join(FONTS_DIR, "Montserrat-Bold.ttf")
+DEFAULT_FONT = os.path.join(FONTS_DIR, "Roboto-Regular.ttf")
+DEFAULT_BOLD_FONT = os.path.join(FONTS_DIR, "Roboto-Regular.ttf")
 
 ICON_NAME_MAP = {
     "clearsky_day": "sun",
@@ -351,7 +351,7 @@ def _load_icon_image(icon_name: str, size: int, icon_manager=None):
         w, h = im.size
         if h != size:
             new_w = max(1, int(w * (size / float(h))))
-            im = im.resize((new_w, size), Image.Resampling.NEAREST)
+            im = im.resize((new_w, size), Image.Resampling.LANCZOS)
         return im
     except Exception:
         return None
@@ -410,7 +410,7 @@ def _resize_to_height_and_pad(icon_im: Image.Image, height: int, pad_square: boo
         w, h = im.size
         if h != height:
             new_w = max(1, int(w * (height / float(h))))
-            im = im.resize((new_w, height), Image.Resampling.NEAREST)
+            im = im.resize((new_w, height), Image.Resampling.LANCZOS)
         if pad_square and im.size[0] != height:
             out = Image.new("RGBA", (height, height), (0, 0, 0, 0))
             ox = (height - im.size[0]) // 2
@@ -1532,7 +1532,7 @@ def make_mockup_with_bezel(image: Image.Image, bezel_asset: str = None, scale: f
     if not bezel_asset:
         if scale != 1.0:
             w, h = image.size
-            return image.resize((int(w * scale), int(h * scale)), Image.Resampling.NEAREST)
+            return image.resize((int(w * scale), int(h * scale)), Image.Resampling.LANCZOS)
         return image
     bezel_path = os.path.join(ASSETS_DIR, bezel_asset)
     if not os.path.isfile(bezel_path):
@@ -1551,7 +1551,38 @@ def make_mockup_with_bezel(image: Image.Image, bezel_asset: str = None, scale: f
         if scale != 1.0:
             sw = int(out.size[0] * scale)
             sh = int(out.size[1] * scale)
-            out = out.resize((sw, sh), Image.Resampling.NEAREST)
+            out = out.resize((sw, sh), Image.Resampling.LANCZOS)
         return out
     except Exception:
         return image
+
+
+def _ensure_font(path: str, size: int):
+    """
+    Ensure a truetype font is returned. If the specified path is missing or invalid,
+    try DEFAULT_FONT. If that fails, warn and fall back to a bitmap default font.
+    """
+    from PIL import ImageFont
+    import os
+
+    try:
+        if path and os.path.isfile(path):
+            return ImageFont.truetype(path, int(size))
+    except Exception:
+        pass
+
+    # Try DEFAULT_FONT if available
+    try:
+        if 'DEFAULT_FONT' in globals() and DEFAULT_FONT and os.path.isfile(DEFAULT_FONT):
+            return ImageFont.truetype(DEFAULT_FONT, int(size))
+    except Exception:
+        pass
+
+    # Last resort fallback
+    try:
+        print("WARNING: truetype font unavailable; using bitmap fallback. Check assets/fonts/ for ttf files.")
+    except Exception:
+        pass
+    from PIL import ImageFont as _IF
+    return _IF.load_default()
+

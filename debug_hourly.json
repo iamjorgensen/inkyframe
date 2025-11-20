@@ -1,14 +1,5 @@
 [
   {
-    "time": "2025-11-20T22:00:00+01:00",
-    "temp": -1.8,
-    "wind_speed": 4.1,
-    "wind_dir": 357.0,
-    "precip_next_1h": 0.0,
-    "precip": 0.0,
-    "condition": "Klart"
-  },
-  {
     "time": "2025-11-20T23:00:00+01:00",
     "temp": -1.9,
     "wind_speed": 3.7,
