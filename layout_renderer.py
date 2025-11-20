@@ -351,7 +351,7 @@ def _load_icon_image(icon_name: str, size: int, icon_manager=None):
         w, h = im.size
         if h != size:
             new_w = max(1, int(w * (size / float(h))))
-            im = im.resize((new_w, size), Image.Resampling.LANCZOS)
+            im = im.resize((new_w, size), Image.Resampling.NEAREST)
         return im
     except Exception:
         return None
@@ -410,7 +410,7 @@ def _resize_to_height_and_pad(icon_im: Image.Image, height: int, pad_square: boo
         w, h = im.size
         if h != height:
             new_w = max(1, int(w * (height / float(h))))
-            im = im.resize((new_w, height), Image.Resampling.LANCZOS)
+            im = im.resize((new_w, height), Image.Resampling.NEAREST)
         if pad_square and im.size[0] != height:
             out = Image.new("RGBA", (height, height), (0, 0, 0, 0))
             ox = (height - im.size[0]) // 2
@@ -1532,7 +1532,7 @@ def make_mockup_with_bezel(image: Image.Image, bezel_asset: str = None, scale: f
     if not bezel_asset:
         if scale != 1.0:
             w, h = image.size
-            return image.resize((int(w * scale), int(h * scale)), Image.Resampling.LANCZOS)
+            return image.resize((int(w * scale), int(h * scale)), Image.Resampling.NEAREST)
         return image
     bezel_path = os.path.join(ASSETS_DIR, bezel_asset)
     if not os.path.isfile(bezel_path):
@@ -1551,7 +1551,7 @@ def make_mockup_with_bezel(image: Image.Image, bezel_asset: str = None, scale: f
         if scale != 1.0:
             sw = int(out.size[0] * scale)
             sh = int(out.size[1] * scale)
-            out = out.resize((sw, sh), Image.Resampling.LANCZOS)
+            out = out.resize((sw, sh), Image.Resampling.NEAREST)
         return out
     except Exception:
         return image

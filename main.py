@@ -89,6 +89,63 @@ def save_for_inky_color(img, out_jpg=Path("output.jpg")):
     print("Saved full-color JPEG for Inky:", out_jpg)
 
 
+
+# ---- NEW: exact 6-color PNG saver (no dithering) ----
+from PIL import Image, ImageOps, ImageEnhance
+
+# Replace these with your exact 6-color Inky RGB values if you have them
+PALETTE_RGB = [
+    (255, 255, 255),  # white
+    (0, 0, 0),        # black
+    (255, 0, 0),      # red
+    (255, 153, 0),    # orange/amber
+    (0, 153, 0),      # green
+    (0, 51, 255),     # blue
+]
+
+TARGET = (800, 480)
+DPI_PPI = 127  # 0.2 mm / px
+
+def _make_palette_image(palette_rgb):
+    pal = []
+    for (r, g, b) in palette_rgb:
+        pal += [int(r) & 0xFF, int(g) & 0xFF, int(b) & 0xFF]
+    while len(pal) < 768:
+        pal += [0, 0, 0]
+    p = Image.new('P', (1, 1))
+    p.putpalette(pal)
+    return p
+
+def save_for_inky_6color_png(img, out_png=Path("output.png")):
+    """Flatten alpha, optionally enhance slightly, quantize to exact 6-color palette, save PNG."""
+    # Flatten alpha to white
+    if img.mode == "RGBA" or img.mode == "LA" or (hasattr(img, 'split') and len(img.split()) > 3):
+        bg = Image.new("RGB", img.size, (255, 255, 255))
+        try:
+            bg.paste(img, mask=img.split()[3])
+        except Exception:
+            bg.paste(img)
+        working = bg
+    else:
+        working = img.convert("RGB")
+
+    # Ensure exact target resolution (NEAREST to avoid antialias)
+    if working.size != TARGET:
+        working = working.resize(TARGET, Image.NEAREST)
+
+    # Optional: small contrast/sharpness to restore 'pop' (comment out if not desired)
+    # working = ImageOps.autocontrast(working, cutoff=1)
+    # working = ImageEnhance.Sharpness(working).enhance(1.05)
+
+    palette_img = _make_palette_image(PALETTE_RGB)
+    pal = working.quantize(palette=palette_img, dither=Image.Dither.NONE)
+    pal.save(out_png, format="PNG", optimize=True, dpi=(DPI_PPI, DPI_PPI))
+    print("Saved exact 6-color PNG:", out_png)
+    return out_png
+
+# ---------------- end new function ----------------
+
+
 def main(single_run=True, days=10):
     print(f"[main] starting with days={days}")
     # Hent data med riktig days
@@ -113,13 +170,6 @@ def main(single_run=True, days=10):
     except Exception as e:
         print("ERROR saving full-color JPEG:", e)
     # mockup med bezel
-    try:
-        mock = make_mockup_with_bezel(img)
-        mock.save("mockup.png")
-        print("Saved mockup to: mockup.png")
-    except Exception as e:
-        print("Failed to create mockup.png:", e)
-
     # forsøk å sende til inky (hvis tilgjengelig)
     try:
         res = display_on_inky_if_available(img)

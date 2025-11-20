@@ -4,7 +4,7 @@ import subprocess
 
 app = Flask(__name__)
 ROOT = Path(__file__).parent
-IMG = ROOT / "output.jpg"   # sørg for at dette matcher hva main.py lager
+IMG = ROOT / "output.png"   # sørg for at dette matcher hva main.py lager
 
 @app.get("/")
 def home():
@@ -14,7 +14,7 @@ def home():
 def image():
     if not IMG.exists():
         abort(404, "No image found")
-    return send_file(str(IMG), mimetype="image/jpeg")
+    return send_file(str(IMG), mimetype="image/png")
 
 # Trigger main.py via systemd service (non-blocking)
 @app.post("/run-main")
