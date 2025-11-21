@@ -28,7 +28,7 @@ opts = {
     "header_text_color": "WHITE",
     "dotted_line_between_events": True,
     "event_vspacing": 14,
-    "font_small_size": 16,
+    "font_small_size": 18,
     "font_bold_size": 22,
     "dot_gap": 200,
     "dot_color": "WHITE",
