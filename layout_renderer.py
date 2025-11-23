@@ -41,8 +41,8 @@ ASSETS_DIR = os.path.join(os.path.dirname(__file__), "assets")
 FONTS_DIR = os.path.join(ASSETS_DIR, "fonts")
 ICONS_DIR = os.path.join(ASSETS_DIR, "icons")
 
-DEFAULT_FONT = os.path.join(FONTS_DIR, "Roboto-Regular.ttf")
-DEFAULT_BOLD_FONT = os.path.join(FONTS_DIR, "Roboto-Regular.ttf")
+DEFAULT_FONT = os.path.join(FONTS_DIR, "Roboto-Bold.ttf")
+DEFAULT_BOLD_FONT = os.path.join(FONTS_DIR, "Roboto-Bold.ttf")
 
 ICON_NAME_MAP = {
     "clearsky_day": "sun",

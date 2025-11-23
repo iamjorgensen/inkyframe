@@ -79,7 +79,7 @@ opts = {
     "header_text_color": "WHITE",
     "dotted_line_between_events": True,
     "event_vspacing": 14,
-    "font_small_size": 15,
+    "font_small_size": 16,
     "font_bold_size": 16,
     "dot_gap": 200,
     "dot_color": "WHITE",
@@ -89,8 +89,8 @@ opts = {
     "min_box_height": 48,
     "show_more_text": True,
     "weather_debug": True,
-    "tag_font": "NotoSans-Bold.ttf",   # filename in assets/fonts OR full path
-    "tag_font_size": 14,  
+    "tag_font": "Roboto-Bold.ttf",   # filename in assets/fonts OR full path
+    "tag_font_size": 16,  
     "weather_tag_font": "Roboto-Regular.ttf",   # filename in assets/fonts or full path
     "weather_tag_font_size": 30,                # integer
     "weather_gap": 0,                            # pixel gap between each weather info block (default 
