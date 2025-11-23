@@ -1,3 +1,24 @@
+
+def _ensure_opaque(c):
+    """Normalize color tuple or hex to (r,g,b,a)"""
+    if c is None:
+        return (0,0,0,255)
+    if isinstance(c, str):
+        s = c.strip()
+        if s.startswith('#') and len(s) in (7,4):
+            if len(s)==7:
+                r=int(s[1:3],16); g=int(s[3:5],16); b=int(s[5:7],16)
+            else:
+                r=int(s[1]*2,16); g=int(s[2]*2,16); b=int(s[3]*2,16)
+            return (r,g,b,255)
+        return (0,0,0,255)
+    if isinstance(c, (list,tuple)):
+        if len(c)>=4:
+            return (int(c[0]),int(c[1]),int(c[2]),int(c[3]))
+        else:
+            return (int(c[0]),int(c[1]),int(c[2]),255)
+    return (0,0,0,255)
+
 # layout_renderer.py
 """
 Renderer for Inky Frame Calendar Project.
@@ -20,8 +41,8 @@ ASSETS_DIR = os.path.join(os.path.dirname(__file__), "assets")
 FONTS_DIR = os.path.join(ASSETS_DIR, "fonts")
 ICONS_DIR = os.path.join(ASSETS_DIR, "icons")
 
-DEFAULT_FONT = os.path.join(FONTS_DIR, "NotoSans-Bold.ttf")
-DEFAULT_BOLD_FONT = os.path.join(FONTS_DIR, "NotoSans-Bold.ttf")
+DEFAULT_FONT = os.path.join(FONTS_DIR, "Roboto-Regular.ttf")
+DEFAULT_BOLD_FONT = os.path.join(FONTS_DIR, "Roboto-Regular.ttf")
 
 ICON_NAME_MAP = {
     "clearsky_day": "sun",
@@ -203,19 +224,19 @@ def draw_period_weather_row(image: Image.Image, x: int, y: int, width: int, hour
 # ---------------- Helpers ----------------------------------------------------
 
 def _measure_box_height_for_date(events: list,
-                                 box_header_height: int,
-                                 event_vspacing: int,
-                                 min_icon_padding: int,
-                                 draw: 'ImageDraw.ImageDraw',
-                                 font,
-                                 small_font,
-                                 inner_w: int,
-                                 event_icon_slot: int,
-                                 icon_gap: int,
-                                 top_padding: int = 6,
-                                 bottom_padding: int = 6,
-                                 min_box_height: int = 24,
-                                 max_event_lines: int = 3) -> int:
+                                box_header_height: int,
+                                event_vspacing: int,
+                                min_icon_padding: int,
+                                draw: 'ImageDraw.ImageDraw',
+                                font,
+                                small_font,
+                                inner_w: int,
+                                event_icon_slot: int,
+                                icon_gap: int,
+                                top_padding: int = 6,
+                                bottom_padding: int = 6,
+                                min_box_height: int = 24,
+                                max_event_lines: int = 3) -> int:
     """
     Compute total box height required to render a date's events.
 
@@ -360,10 +381,10 @@ def _load_icon_image(icon_name: str, size: int, icon_manager=None):
 def _normalize_color_input(col):
     """
     Accept color as:
-      - None -> (0,0,0)
-      - int -> greyscale
-      - tuple/list -> first 3 items
-      - string -> ImageColor.getrgb
+    - None -> (0,0,0)
+    - int -> greyscale
+    - tuple/list -> first 3 items
+    - string -> ImageColor.getrgb
     Returns (r,g,b)
     """
     try:
@@ -533,22 +554,48 @@ def _contrast_ratio(l1, l2):
     return (a + 0.05) / (b + 0.05)
 
 
+
 def _fg_for_bg(rgb):
     """
-    Choose either white (255,255,255) or black (0,0,0) depending on which yields higher contrast ratio.
+    Choose white or black for text on top of rgb background.
+    Prefer white for darker/saturated backgrounds (so red tags get white text).
     """
     try:
         if rgb is None:
             return (0, 0, 0)
-        bg = (int(rgb[0]), int(rgb[1]), int(rgb[2]))
-        l_bg = _relative_luminance(bg)
-        l_white = _relative_luminance((255, 255, 255))
-        l_black = _relative_luminance((0, 0, 0))
-        cr_white = _contrast_ratio(l_bg, l_white)
-        cr_black = _contrast_ratio(l_bg, l_black)
-        return (255, 255, 255) if cr_white >= cr_black else (0, 0, 0)
+        # accept tuples, hex strings, or color names already normalized elsewhere
+        if isinstance(rgb, str):
+            # try hex like "#rrggbb"
+            s = rgb.strip()
+            if s.startswith("#") and len(s) in (7, 4):
+                if len(s) == 7:
+                    r = int(s[1:3], 16); g = int(s[3:5], 16); b = int(s[5:7], 16)
+                else:
+                    r = int(s[1]*2, 16); g = int(s[2]*2, 16); b = int(s[3]*2, 16)
+                bg = (r, g, b)
+            else:
+                # unknown string, fall back
+                return (0,0,0)
+        else:
+            bg = (int(rgb[0]), int(rgb[1]), int(rgb[2]))
+        def rl(c):
+            v = c / 255.0
+            return v/12.92 if v <= 0.03928 else ((v+0.055)/1.055) ** 2.4
+        l_bg = 0.2126*rl(bg[0]) + 0.7152*rl(bg[1]) + 0.0722*rl(bg[2])
+        # prefer white for darker or saturated colors (like pure red)
+        if l_bg < 0.45:
+            return (255,255,255)
+        # fallback to contrast ratio
+        def contrast(l1,l2):
+            L1 = max(l1,l2); L2 = min(l1,l2)
+            return (L1+0.05)/(L2+0.05)
+        l_white = 1.0
+        l_black = 0.0
+        cr_white = contrast(l_bg, l_white)
+        cr_black = contrast(l_bg, l_black)
+        return (255,255,255) if cr_white >= cr_black else (0,0,0)
     except Exception:
-        return (0, 0, 0)
+        return (0,0,0)
 
 
 def draw_event_tags(draw: ImageDraw.ImageDraw, start_x: int, top_y: int, ev: dict,
@@ -584,14 +631,20 @@ def draw_event_tags(draw: ImageDraw.ImageDraw, start_x: int, top_y: int, ev: dic
                 bg = tuple(tag["color_rgb"])
             except Exception:
                 bg = None
+
         elif tag.get("color_name"):
+
             try:
+
                 bg = _normalize_color_input(tag["color_name"])
+
             except Exception:
+
                 bg = None
 
+
         if bg is None:
-            # fallback: try event color fields, then grey
+# fallback: try event color fields, then grey
             ev_color = None
             if ev.get("tag_color_rgb") is not None:
                 ev_color = tuple(ev.get("tag_color_rgb"))
@@ -904,12 +957,12 @@ def _gather_weather_values(entry: dict):
     return icon, temp_text, precip_text, wind_text
 
 def render_events_section(image: Image.Image, x: int, y: int, width: int, events: List[dict],
-                          font: ImageFont.ImageFont, small_font: ImageFont.ImageFont = None,
-                          icon_manager=None, event_vspacing: int = 14, icon_gap: int = 6,
-                          text_color=0, dotted_line=False, dot_color=None, dot_gap=3,
-                          min_icon_padding: int = 4, icon_pad_square: bool = True,
-                          event_icon_slot: int = 20, tint_event_icons: bool = True,
-                          max_event_lines: int = 2):
+                        font: ImageFont.ImageFont, small_font: ImageFont.ImageFont = None, tag_font: ImageFont.ImageFont = None,
+                        icon_manager=None, event_vspacing: int = 14, icon_gap: int = 6,
+                        text_color=0, dotted_line=False, dot_color=None, dot_gap=3,
+                        min_icon_padding: int = 4, icon_pad_square: bool = True,
+                        event_icon_slot: int = 20, tint_event_icons: bool = True,
+                        max_event_lines: int = 2):
     """
     Draw events vertically and return new cursor_y below last drawn line.
 
@@ -922,6 +975,11 @@ def render_events_section(image: Image.Image, x: int, y: int, width: int, events
             small_font = ImageFont.truetype(DEFAULT_FONT, max(10, getattr(font, "size", 12) - 2))
         except Exception:
             small_font = font
+    if tag_font is None:
+        try:
+            tag_font = small_font
+        except Exception:
+            tag_font = font
 
     body_rgb = _normalize_color_input(text_color)
     dot_rgb = _normalize_color_input(dot_color) if dot_color is not None else (0, 0, 0)
@@ -998,7 +1056,7 @@ def render_events_section(image: Image.Image, x: int, y: int, width: int, events
                 ph_cy = cursor_y + line_height // 2
                 fill_col = (0, 0, 0)
                 draw.ellipse([ph_cx - ph_r, ph_cy - ph_r, ph_cx + ph_r, ph_cy + ph_r],
-                             fill=fill_col, outline=None)
+                            fill=fill_col, outline=None)
 
         # draw time (baseline top at cursor_y)
         name_x = text_x
@@ -1124,7 +1182,7 @@ def render_events_section(image: Image.Image, x: int, y: int, width: int, events
 
         # Attempt to draw tags on the first line
         after_tags_x = draw_event_tags(draw, tag_start_x, tag_top, ev, small_font,
-                                       padding_x=tag_padding_x, padding_y=tag_padding_y, gap=tag_gap, max_x=max_right)
+                                    padding_x=tag_padding_x, padding_y=tag_padding_y, gap=tag_gap, max_x=max_right)
         drew_on_first_line = (after_tags_x != tag_start_x)
 
         # Draw the remaining wrapped lines (if any)
@@ -1212,7 +1270,8 @@ def render_calendar(data: dict, width: int, height: int, days: int = 8, renderer
     box_outline_raw = opts.get("border_color", "black")
     body_text_raw = default_text_color_raw
 
-    header_fill_rgba = _normalize_bg(header_fill_raw)
+    hf = _normalize_bg(header_fill_raw)
+    header_fill_rgba = (hf[0], hf[1], hf[2], 255)
     header_text_rgb = _normalize_color_input(header_text_raw)
     box_outline_rgb = _normalize_color_input(box_outline_raw)
     body_text_rgb = _normalize_color_input(body_text_raw)
@@ -1221,13 +1280,36 @@ def render_calendar(data: dict, width: int, height: int, days: int = 8, renderer
     # expose for fallback glyph
     globals()["box_outline_rgb"] = box_outline_rgb
 
-    img = Image.new("RGBA", (width, height), color=bg_rgba)
-    draw = ImageDraw.Draw(img)
+    base = Image.new("RGBA", (width, height), color=bg_rgba)
+    draw = ImageDraw.Draw(base)
     font_path = opts.get("font_path", DEFAULT_FONT)
     bold_font_path = opts.get("bold_font_path", DEFAULT_BOLD_FONT)
     font = _ensure_font(font_path, max(10, font_small_size))
     bold_font = _ensure_font(bold_font_path, font_bold_size)
     small_font = _ensure_font(font_path, font_small_size)
+
+    # Ensure weather_tag_font is defined (safe fallback if opts missing)
+    weather_tag_font = None
+    try:
+        weather_tag_font_name = opts.get("weather_tag_font", None)
+        weather_tag_font_size = int(opts.get("weather_tag_font_size", max(10, font_small_size - 1)))
+    except Exception:
+        weather_tag_font_name = None
+        weather_tag_font_size = max(10, font_small_size - 1)
+    try:
+        if weather_tag_font_name:
+            if os.path.isfile(weather_tag_font_name):
+                weather_tag_font = _ensure_font(weather_tag_font_name, weather_tag_font_size)
+            else:
+                candidate = os.path.join(FONTS_DIR, weather_tag_font_name)
+                weather_tag_font = _ensure_font(candidate, weather_tag_font_size)
+    except Exception:
+        weather_tag_font = None
+    if weather_tag_font is None:
+        try:
+            weather_tag_font = small_font
+        except Exception:
+            weather_tag_font = font
 
     title = opts.get("title", "Dokkveien 19 - Ukeskalender")
     draw.text((12, 8), title, font=bold_font, fill=_normalize_color_input(heading_color))
@@ -1261,7 +1343,7 @@ def render_calendar(data: dict, width: int, height: int, days: int = 8, renderer
                     mapped = {}
                 # Only update fields that mapping returns (preserve existing structured fields)
                 for k in ("display_text", "tags", "tag_text", "tag_color_name", "tag_color_rgb",
-                          "icon", "icon_size", "icon_color_name", "icon_color_rgb", "mode", "original_name"):
+                        "icon", "icon_size", "icon_color_name", "icon_color_rgb", "mode", "original_name"):
                     if k in mapped and mapped[k] is not None:
                         ev_copy[k] = mapped[k]
             mapped_events.append(ev_copy)
@@ -1282,9 +1364,9 @@ def render_calendar(data: dict, width: int, height: int, days: int = 8, renderer
     for d in ordered_dates:
         evs = groups.get(d, [])
         h = _measure_box_height_for_date(evs, box_header_height, event_vspacing, min_icon_padding,
-                                         draw, font, small_font, inner_w, event_icon_slot, icon_gap,
-                                         top_padding=top_padding, bottom_padding=bottom_padding,
-                                         min_box_height=min_box_height, max_event_lines=max_event_lines)
+                                        draw, font, small_font, inner_w, event_icon_slot, icon_gap,
+                                        top_padding=top_padding, bottom_padding=bottom_padding,
+                                        min_box_height=min_box_height, max_event_lines=max_event_lines)
         date_heights[d] = h
 
     placements = {}
@@ -1321,7 +1403,43 @@ def render_calendar(data: dict, width: int, height: int, days: int = 8, renderer
 
         header_fill_rect = [hx0, hy0 - 1, hx1, hy1]
         try:
-            draw.rounded_rectangle(header_fill_rect, radius=box_radius, fill=header_fill_rgba)
+            # determine header color per-date (optionally override for weekend)
+            draw_header_fill = header_fill_rgba
+            try:
+                from datetime import datetime
+                dt = None
+                # Try several common formats
+                try:
+                    dt = datetime.fromisoformat(str(date_key))
+                except Exception:
+                    try:
+                        dt = datetime.strptime(str(date_key).split()[0], '%Y-%m-%d')
+                    except Exception:
+                        try:
+                            dt = datetime.strptime(str(date_key).split()[0], '%d-%m-%Y')
+                        except Exception:
+                            dt = None
+                if dt is not None and dt.weekday() >= 5:
+                    # if user provided weekend color use it, otherwise default to red
+                    weekend_col = None
+                    try:
+                        if isinstance(opts, dict):
+                            weekend_col = opts.get('weekend_header_fill_color', None)
+                    except Exception:
+                        weekend_col = None
+                    if weekend_col is None:
+                        weekend_col = (255, 0, 0)
+                    wf = _normalize_bg(weekend_col)
+                    draw_header_fill = (wf[0], wf[1], wf[2], 255)
+            except Exception:
+                pass
+            draw.rounded_rectangle(header_fill_rect, radius=box_radius, fill=draw_header_fill)
+        except Exception:
+            try:
+                draw.rounded_rectangle(header_fill_rect, radius=box_radius, fill=header_fill_rgba)
+            except Exception:
+                draw.rectangle(header_fill_rect, fill=header_fill_rgba)
+
         except Exception:
             draw.rectangle(header_fill_rect, fill=header_fill_rgba)
 
@@ -1332,7 +1450,7 @@ def render_calendar(data: dict, width: int, height: int, days: int = 8, renderer
 
         try:
             draw.rounded_rectangle([x, y, x + box_w, y + box_h], radius=box_radius,
-                                   outline=box_outline_rgb, width=border_thickness, fill=None)
+                                outline=box_outline_rgb, width=border_thickness, fill=None)
         except Exception:
             draw.rectangle([x, y, x + box_w, y + box_h], outline=box_outline_rgb, width=border_thickness)
 
@@ -1449,7 +1567,7 @@ def render_calendar(data: dict, width: int, height: int, days: int = 8, renderer
                     icon_x = text_x - iw - 6
                     if icon_x >= min_x_for_text:
                         icon_y = y + ((box_header_height - ih) // 2)
-                        img.paste(icon_tinted, (icon_x, icon_y), icon_tinted)
+                        base.paste(icon_tinted, (icon_x, icon_y), icon_tinted)
                         draw.text((text_x, y + 6), text, font=font_for_text, fill=header_text_rgb)
                         return icon_x - gap_between_parts
                     else:
@@ -1509,13 +1627,13 @@ def render_calendar(data: dict, width: int, height: int, days: int = 8, renderer
 
         cur_y = inner_y
         if evs:
-            cur_y = render_events_section(img, inner_x, cur_y, inner_w, evs, font,
-                                          small_font=small_font, icon_manager=opts.get("icon_manager"),
-                                          event_vspacing=event_vspacing, icon_gap=icon_gap,
-                                          text_color=body_text_rgb, dotted_line=dotted_line_between_events,
-                                          dot_color=dot_rgb, dot_gap=dot_gap, min_icon_padding=min_icon_padding,
-                                          icon_pad_square=icon_pad_square, event_icon_slot=event_icon_slot,
-                                          tint_event_icons=tint_event_icons, max_event_lines=max_event_lines)
+            cur_y = render_events_section(base, inner_x, cur_y, inner_w, evs, font,
+                                        small_font=small_font, icon_manager=opts.get("icon_manager"),
+                                        event_vspacing=event_vspacing, icon_gap=icon_gap,
+                                        text_color=body_text_rgb, dotted_line=dotted_line_between_events,
+                                        dot_color=dot_rgb, dot_gap=dot_gap, min_icon_padding=min_icon_padding,
+                                        icon_pad_square=icon_pad_square, event_icon_slot=event_icon_slot,
+                                        tint_event_icons=tint_event_icons, max_event_lines=max_event_lines)
         else:
             placeholder = opts.get("no_events_text", "")
             if placeholder:
@@ -1525,7 +1643,7 @@ def render_calendar(data: dict, width: int, height: int, days: int = 8, renderer
             more_y = max_bottom - getattr(font, "size", 12)
             draw.text((inner_x, more_y), "…", font=font, fill=body_text_rgb)
 
-    return img
+    return base
 
 
 def make_mockup_with_bezel(image: Image.Image, bezel_asset: str = None, scale: float = 1.0):
@@ -1586,3 +1704,9 @@ def _ensure_font(path: str, size: int):
     from PIL import ImageFont as _IF
     return _IF.load_default()
 
+
+    if weather_tag_font is None:
+        try:
+            weather_tag_font = _ensure_font(font_path, weather_tag_font_size)
+        except Exception:
+            weather_tag_font = small_font

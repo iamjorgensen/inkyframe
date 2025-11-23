@@ -1,7 +1,6 @@
 import subprocess
 import os
-
-INKSCAPE_PATH = r"C:\Users\a131001\Inkscape Portable\inkscapeportable.exe"
+INKSCAPE_PATH = r"C:\Program Files\Inkscape\bin\inkscape.exe"
 
 # Bruker nåværende mappe (der scriptet kjører)
 ICON_DIR = os.getcwd()

@@ -31,12 +31,13 @@ except Exception as e:
 
 # --- Colors and small helpers ----------------------------------------
 INKY_COLORS = {
-    "black": (0, 0, 0),
-    "white": (255, 255, 255),
-    "red": (255, 0, 0),
+    "black":  (0, 0, 0),
+    "white":  (255, 255, 255),
+    "red":    (255, 0, 0),
     "yellow": (255, 255, 0),
-    "blue": (0, 51, 255),
-    "green": (0, 153, 0),
+    "green":  (0, 128, 0),
+    "blue":   (0, 0, 255),
+    "orange": (255, 128, 0),
 }
 
 def color_to_rgb(name: Optional[str]):

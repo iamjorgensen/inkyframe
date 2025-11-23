@@ -1,6 +1,6 @@
 {
   "meta": {
-    "fetched_at": 1763760580
+    "fetched_at": 1763923525
   },
   "mappings": [
     {
@@ -23,9 +23,9 @@
     },
     {
       "keyword": "ferie:",
-      "icon": "flag",
-      "replacement": "ferie",
-      "mode": "add_all",
+      "icon": "umbrella-beach",
+      "replacement": "",
+      "mode": "replace_icon",
       "color": "",
       "match_type": "contains",
       "size_px": 22
@@ -35,7 +35,7 @@
       "icon": "bell",
       "replacement": "",
       "mode": "replace_icon",
-      "color": "RED",
+      "color": "",
       "match_type": "contains",
       "size_px": 22
     },
@@ -89,7 +89,7 @@
       "icon": "",
       "replacement": "Sigrid",
       "mode": "replace_text",
-      "color": "GREEN",
+      "color": "RED",
       "match_type": "contains",
       "size_px": 22
     },
@@ -107,7 +107,7 @@
       "icon": "",
       "replacement": "Ingun",
       "mode": "replace_text",
-      "color": "RED",
+      "color": "GREEN",
       "match_type": "contains",
       "size_px": 22
     },
@@ -224,7 +224,7 @@
       "icon": "",
       "replacement": "Sigrid",
       "mode": "replace_text",
-      "color": "GREEN",
+      "color": "RED",
       "match_type": "contains",
       "size_px": 22
     },
@@ -251,7 +251,7 @@
       "icon": "",
       "replacement": "Ingun",
       "mode": "replace_text",
-      "color": "RED",
+      "color": "GREEN",
       "match_type": "contains",
       "size_px": 22
     },
@@ -270,6 +270,15 @@
       "replacement": "Peter",
       "mode": "add_all",
       "color": "BLUE",
+      "match_type": "contains",
+      "size_px": 22
+    },
+    {
+      "keyword": "Offentlig Fridag:",
+      "icon": "umbrella-beach",
+      "replacement": "",
+      "mode": "replace_icon",
+      "color": "",
       "match_type": "contains",
       "size_px": 22
     }

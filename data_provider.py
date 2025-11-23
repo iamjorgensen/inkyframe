@@ -28,6 +28,12 @@ load_dotenv()
 # --- Konfig fra miljøvariabler (fallbacks for enkel testing) ---
 API_KEY_GOOGLE = os.environ.get("API_KEY_GOOGLE", "")
 CALENDAR_ID = os.environ.get("CALENDAR_ID", "3fssuka2am16b2jt44h4fl2o4g@group.calendar.google.com")
+
+# Optional separate calendar id for public holidays (fallback to the official Norway holidays calendar)
+HOLIDAYS_CALENDAR_ID = os.environ.get(
+    "HOLIDAYS_CALENDAR_ID",
+    "no.norwegian%23holiday@group.v.calendar.google.com"
+)
 MOVAR_API_TOKEN = os.environ.get("MOVAR_API_TOKEN", "")
 MOVAR_BASE = os.environ.get("MOVAR_BASE", "https://mdt-proxy.movar.no/api")
 LAT = float(os.environ.get("LAT", "59.4376"))
@@ -979,7 +985,14 @@ def initial_fetch_all(days=DEFAULT_DAYS, session=None, gatenavn=None, husnr=None
         tomme = fetch_tommekalender_events(fractions, days=days, session=s, gatenavn=gatenavn, husnr=husnr)
         gcal = fetch_google_calendar_events(days=days, session=s)
 
-        # fetch weather: (weather, hourly, meta) expected from your provider function
+        
+        # fetch public holidays (Norway calendar by default)
+        holidays = []
+        try:
+            holidays = fetch_google_holiday_events(calendar_id=HOLIDAYS_CALENDAR_ID, days=days, session=s)
+        except Exception:
+            holidays = []
+# fetch weather: (weather, hourly, meta) expected from your provider function
         weather, hourly, meta = fetch_weather_from_provider(lat=LAT, lon=LON, days=days)
 
         # --- Ensure hourly entries include 'condition' and 'precip' for renderer ---
@@ -1047,7 +1060,7 @@ def initial_fetch_all(days=DEFAULT_DAYS, session=None, gatenavn=None, husnr=None
 
         # merge events (tommekalender + gcal)
         events = []
-        for e in gcal + tomme:
+        for e in gcal + tomme + holidays:
             if not any(x['date'] == e['date'] and x['name'] == e['name'] and x.get('time', '') == e.get('time', '') for x in events):
                 events.append(e)
         events.sort(key=lambda e: (e['date'], e.get('time', '')))
@@ -1202,3 +1215,150 @@ if __name__ == "__main__":
         print("icon:", repr(e.get("icon")))
         print("icon_color_name:", repr(e.get("icon_color_name")))
         print("icon_color_rgb:", repr(e.get("icon_color_rgb")))
+
+
+def fetch_google_holiday_events(calendar_id=None, days=DEFAULT_DAYS, session=None):
+    """
+    Fetch public-holiday (all-day) events from a given Google Calendar ID.
+    Returns list of normalized event dicts similar to fetch_google_calendar_events().
+    These events have:
+      - time: "" (all-day)
+      - tag_text: "Offentlig Fridag:"  (so mapping layer can pick up icon/color)
+    """
+    import requests
+    from datetime import datetime, timedelta
+
+    session = session or requests.Session()
+    cal_id = calendar_id or HOLIDAYS_CALENDAR_ID
+    # ensure '#' is URL encoded for use in URL
+    encoded_cal_id = cal_id.replace("#", "%23")
+
+    today_local = now_local().date()
+    if TZ:
+        start_local_dt = datetime(year=today_local.year, month=today_local.month, day=today_local.day,
+                                  hour=0, minute=0, second=0, microsecond=0, tzinfo=TZ)
+    else:
+        start_local_dt = datetime.combine(today_local, datetime.min.time())
+    start_utc = _ensure_aware(start_local_dt)
+    end_utc = start_utc + timedelta(days=days)
+
+    def iso_z(dt):
+        return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    timeMin = iso_z(start_utc)
+    timeMax = iso_z(end_utc)
+    url = (
+        f"https://www.googleapis.com/calendar/v3/calendars/{encoded_cal_id}/events"
+        f"?timeMin={timeMin}&timeMax={timeMax}&singleEvents=true&fields=items(summary,start,end)&orderBy=startTime&key={API_KEY_GOOGLE}"
+    )
+
+    holidays = []
+    try:
+        r = session.get(url, timeout=10)
+        if r.status_code != 200:
+            return []
+        data = r.json()
+        items = data.get("items", [])
+        # query_start_date used to skip past multi-day events that start earlier
+        try:
+            query_start_date = start_local_dt.date()
+        except Exception:
+            query_start_date = now_local().date()
+
+        for it in items:
+            summary = (it.get("summary") or "").strip()
+            if not summary:
+                continue
+            start = it.get("start", {})
+            end = it.get("end", {})
+
+            # Prefer all-day date events; but if dateTime present, treat defensively.
+            if "date" in start:
+                sdate = start["date"]
+                edate = end.get("date", sdate)
+                try:
+                    sdt = datetime.strptime(sdate, "%Y-%m-%d").date()
+                    edt = datetime.strptime(edate, "%Y-%m-%d").date()
+                except Exception:
+                    sdt = None
+                    edt = None
+
+                # If parsing failed, include if not obviously out-of-range
+                if sdt is None or edt is None:
+                    date_str = sdate
+                    try:
+                        if datetime.strptime(date_str, "%Y-%m-%d").date() < query_start_date:
+                            continue
+                    except Exception:
+                        pass
+                    ev = {
+                        "date": date_str,
+                        "name": summary,
+                        "display_text": summary,
+                        "tag_text": "Offentlig Fridag:",
+                        "tag_color_name": None,
+                        "tag_color_rgb": None,
+                        "time": "",
+                        "icon": None,
+                        "icon_size": None,
+                        "icon_color_name": None,
+                        "icon_color_rgb": None,
+                        "icon_mode": None,
+                        "original_name": summary,
+                    }
+                    if not any(e['date'] == ev['date'] and e['name'] == ev['name'] and e.get('time','') == ev['time'] for e in holidays):
+                        holidays.append(ev)
+                else:
+                    # Google calendar all-day events use exclusive end date, so last_day = edt - 1
+                    last_day = edt - timedelta(days=1)
+                    day = max(sdt, query_start_date)
+                    while day <= last_day:
+                        date_str = day.strftime("%Y-%m-%d")
+                        ev = {
+                            "date": date_str,
+                            "name": summary,
+                            "display_text": summary,
+                            "tag_text": "Offentlig Fridag:",
+                            "tag_color_name": None,
+                            "tag_color_rgb": None,
+                            "time": "",
+                            "icon": None,
+                            "icon_size": None,
+                            "icon_color_name": None,
+                            "icon_color_rgb": None,
+                            "icon_mode": None,
+                            "original_name": summary,
+                        }
+                        if not any(e['date'] == ev['date'] and e['name'] == ev['name'] and e.get('time','') == ev['time'] for e in holidays):
+                            holidays.append(ev)
+                        day += timedelta(days=1)
+            elif "dateTime" in start:
+                # Uncommon for a holiday calendar, but handle gracefully:
+                try:
+                    dt_start = start.get("dateTime") or ""
+                    date_str = dt_start[:10]
+                except Exception:
+                    date_str = None
+                if date_str:
+                    ev = {
+                        "date": date_str,
+                        "name": summary,
+                        "display_text": summary,
+                        "tag_text": "Offentlig Fridag:",
+                        "tag_color_name": None,
+                        "tag_color_rgb": None,
+                        "time": "",
+                        "icon": None,
+                        "icon_size": None,
+                        "icon_color_name": None,
+                        "icon_color_rgb": None,
+                        "icon_mode": None,
+                        "original_name": summary,
+                    }
+                    if not any(e['date'] == ev['date'] and e['name'] == ev['name'] and e.get('time','') == ev['time'] for e in holidays):
+                        holidays.append(ev)
+        holidays.sort(key=lambda e: (e['date'], e.get('time', '')))
+        return holidays
+    except Exception as ex:
+        print("[fetch_google_holiday_events] exception:", ex)
+        return []
