@@ -20,3 +20,7 @@ venv/
 # OS junk
 .DS_Store
 Thumbs.db
+
+debug_hourly.json
+event_mappings_cache.json
+output.jpg
