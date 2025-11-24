@@ -41,8 +41,8 @@ ASSETS_DIR = os.path.join(os.path.dirname(__file__), "assets")
 FONTS_DIR = os.path.join(ASSETS_DIR, "fonts")
 ICONS_DIR = os.path.join(ASSETS_DIR, "icons")
 
-DEFAULT_FONT = os.path.join(FONTS_DIR, "Roboto-Bold.ttf")
-DEFAULT_BOLD_FONT = os.path.join(FONTS_DIR, "Roboto-Bold.ttf")
+DEFAULT_FONT = os.path.join(FONTS_DIR, "NotoSans-Bold.ttf")
+DEFAULT_BOLD_FONT = os.path.join(FONTS_DIR, "NotoSans-Bold.ttf")
 
 ICON_NAME_MAP = {
     "clearsky_day": "sun",
@@ -1237,7 +1237,7 @@ def render_calendar(data: dict, width: int, height: int, days: int = 8, renderer
     min_box_height = int(opts.get("min_box_height", 48))
     show_more_text = bool(opts.get("show_more_text", True))
     columns = int(opts.get("columns", 2))
-    grid_gap = int(opts.get("grid_gap", 5))
+    grid_gap = int(opts.get("grid_gap", 3))
     box_header_height = int(opts.get("box_header_height", 26))
     box_radius = int(opts.get("box_radius", round_radius))
     box_header_padding = int(opts.get("box_header_padding", 6))
