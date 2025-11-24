@@ -1237,7 +1237,7 @@ def render_calendar(data: dict, width: int, height: int, days: int = 8, renderer
     min_box_height = int(opts.get("min_box_height", 48))
     show_more_text = bool(opts.get("show_more_text", True))
     columns = int(opts.get("columns", 2))
-    grid_gap = int(opts.get("grid_gap", 12))
+    grid_gap = int(opts.get("grid_gap", 5))
     box_header_height = int(opts.get("box_header_height", 26))
     box_radius = int(opts.get("box_radius", round_radius))
     box_header_padding = int(opts.get("box_header_padding", 6))
@@ -1310,7 +1310,7 @@ def render_calendar(data: dict, width: int, height: int, days: int = 8, renderer
             weather_tag_font = small_font
         except Exception:
             weather_tag_font = font
-
+    """
     title = opts.get("title", "Dokkveien 19 - Ukeskalender")
     draw.text((12, 8), title, font=bold_font, fill=_normalize_color_input(heading_color))
 
@@ -1327,6 +1327,7 @@ def render_calendar(data: dict, width: int, height: int, days: int = 8, renderer
     if start_label:
         w = _text_width(draw, start_label, small_font)
         draw.text((width - w - 12, 10), start_label, font=small_font, fill=_normalize_color_input(default_text_color_raw))
+    """
 
     events = data.get("events", []) or []
 
@@ -1353,8 +1354,8 @@ def render_calendar(data: dict, width: int, height: int, days: int = 8, renderer
     groups = _group_events_by_date(events)
     ordered_dates = sorted(groups.keys())[:days]
 
-    margin_x = 12
-    margin_y = 40
+    margin_x = 3
+    margin_y = 3
     gap = grid_gap
     box_w = (width - margin_x * 2 - (columns - 1) * gap) // columns
 
@@ -1372,7 +1373,7 @@ def render_calendar(data: dict, width: int, height: int, days: int = 8, renderer
     placements = {}
     col_width = box_w
     col_x_positions = [margin_x + c * (col_width + gap) for c in range(columns)]
-    bottom_limit = height - 12
+    bottom_limit = height - 3
     col_tops = [margin_y for _ in range(columns)]
     current_col = 0
 
