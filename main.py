@@ -69,7 +69,7 @@ def save_spritesheet_from_quant(quant_img: Image.Image, out_path="output.bin"):
 
 # --- renderer options ---
 opts = {
-    "border_thickness": 1,
+    "border_thickness": 2,
     "round_radius": 2,
     "underline_date": False,
     "day_fill": False,

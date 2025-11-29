@@ -1237,7 +1237,7 @@ def render_calendar(data: dict, width: int, height: int, days: int = 8, renderer
     min_box_height = int(opts.get("min_box_height", 48))
     show_more_text = bool(opts.get("show_more_text", True))
     columns = int(opts.get("columns", 2))
-    grid_gap = int(opts.get("grid_gap", 3))
+    grid_gap = int(opts.get("grid_gap", 12))
     box_header_height = int(opts.get("box_header_height", 26))
     box_radius = int(opts.get("box_radius", round_radius))
     box_header_padding = int(opts.get("box_header_padding", 6))
@@ -1615,7 +1615,7 @@ def render_calendar(data: dict, width: int, height: int, days: int = 8, renderer
             underline_y = hy1 - 4
             draw.line((date_x, underline_y, date_x + date_w, underline_y), fill=box_outline_rgb, width=1)
 
-        inner_x = x + 8
+        inner_x = x + 10
         inner_y = y + box_header_height + top_padding
         inner_w = box_w - 16
         max_bottom = y + box_h - bottom_padding

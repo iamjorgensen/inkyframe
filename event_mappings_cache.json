@@ -1,6 +1,6 @@
 {
   "meta": {
-    "fetched_at": 1764008478
+    "fetched_at": 1764410276
   },
   "mappings": [
     {
@@ -275,7 +275,7 @@
     },
     {
       "keyword": "Offentlig Fridag:",
-      "icon": "umbrella-beach",
+      "icon": "umbrella",
       "replacement": "",
       "mode": "replace_icon",
       "color": "",
